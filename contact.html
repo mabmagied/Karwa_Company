@@ -95,7 +95,7 @@
       align-items: center;
       gap: 10px;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 24px;
       color: var(--logo-color);
       user-select: none;
     }
@@ -110,7 +110,7 @@
       text-decoration: none;
       color: var(--nav-text);
       font-weight: 500;
-      font-size: 16px;
+      font-size: 18px;
       transition: color 0.3s ease;
     }
 
@@ -138,7 +138,7 @@
       align-items: center;
       justify-content: center;
     }
-    /* نفس شكل زر الدارك مود */
+/* نفس شكل زر الدارك مود */
 .floating-btn {
   position: fixed;
   right: 30px;
@@ -193,7 +193,7 @@
   background-color: var(--services-bg);
   margin: 100px auto 20px;
   border-radius: 30px;
-  font-size: 20px;
+  font-size: 24px;
   /* لا ظل افتراضي هنا */
   box-shadow: none;
  box-shadow: 0 4px 8px var(--shadow);
@@ -298,7 +298,7 @@
 
       .services.contact {
         padding: 20px;
-        font-size: 16px;
+        font-size: 18px;
       }
 
       .content-container {
@@ -334,7 +334,7 @@
       transition: all 0.5s ease;
       opacity: 1;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 22px;
       color: var(--logo-color);
       user-select: none;
     }
@@ -396,7 +396,8 @@
     </section>
   </main>
 
-    <!-- Floating dark mode toggle button -->
+  
+      <!-- Floating dark mode toggle button -->
     <button id="langToggleBtn"
         class="floating-btn lang-toggle"
         title="تبديل اللغة">EN</button>
@@ -407,149 +408,132 @@
         onclick="toggleTheme()"
         title="تبديل الوضع المظلم">🌙</button>
 
+
   <footer>
     جميع الحقوق محفوظة لشركة كروة لتوصيل الطلبات الإستهلاكية &copy; 2025
   </footer>
 
 
-
 <script>
-  // تفعيل الإعدادات عند تحميل الصفحة
   document.addEventListener('DOMContentLoaded', function () {
+    // === الإعدادات المحفوظة ===
     const savedTheme = localStorage.getItem('theme') || 'light';
     const savedLangIndex = parseInt(localStorage.getItem('langIndex')) || 0;
-    
-    // ✅ نقرأ حالة التبديل التلقائي من localStorage (جديد)
-    const autoSwitchPref = localStorage.getItem("langAutoSwitch");
-    autoSwitchLang = autoSwitchPref !== "false"; // ✅ لو false يبقى المستخدم وقف التبديل التلقائي
+    const savedAutoSwitch = localStorage.getItem('autoSwitch') !== 'false';
 
-    applyTheme(savedTheme);
-    updateAllTexts(savedLangIndex);
-
-    // زر تبديل اللغة
-    const langBtn = document.getElementById("langToggleBtn");
-    if (langBtn) {
-      langBtn.addEventListener("click", () => {
-        autoSwitchLang = false; // ✅ نوقف التبديل التلقائي عند اختيار المستخدم يدويًا
-        localStorage.setItem("langAutoSwitch", "false"); // ✅ نحفظ ذلك في localStorage
-
-        langIndex = (langIndex + 1) % texts.companyNames.length;
-        localStorage.setItem("langIndex", langIndex);
-        updateAllTexts(langIndex);
-      });
-    }
-
-    // تشغيل التبديل التلقائي للغة
-    startAutoLangSwitch();
-  });
-
-  // الوضع الداكن / الفاتح
-  function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    applyTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-  }
-
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    const button = document.querySelector('.theme-toggle');
-    if (button) button.innerHTML = theme === 'light' ? '🌙' : '☀';
-
+    // === عناصر من الصفحة ===
+    const html = document.documentElement;
+    const buttonTheme = document.querySelector('.theme-toggle');
     const logoImg = document.getElementById('logoImage');
-    if (logoImg) {
-      logoImg.src = theme === 'dark'
-        ? 'CSS/Images/logo_dark2.png'
-        : 'CSS/Images/logo.png';
-    }
-  }
-
-  // البيانات الخاصة باللغتين
-  const texts = {
-    companyNames: [
-      "شركة كروة لتوصيل الطلبات الإستهلاكية",
-      "Karwa Delivery Services"
-    ],
-    heroTitles: [
-      "شركة توصيل طلبات داخلية آمنة",
-      "Secure Local Delivery Company"
-    ],
-    ctaTexts: [
-      "اطلب الآن",
-      "Order Now"
-    ],
-    navItems: [
-      [
-        { text: "الرئيسية", href: "index.html" },
-        { text: "خدماتنا", href: "services.html" },
-        { text: "عن الشركة", href: "about.html" },
-        { text: "اطلب خدمة", href: "contact.html" }
-      ],
-      [
-        { text: "Home", href: "index.html" },
-        { text: "Services", href: "services.html" },
-        { text: "About", href: "about.html" },
-        { text: "Request Service", href: "contact.html" }
-      ]
-    ],
-    langBtnTexts: ["EN", "ع"]
-  };
-
-  let langIndex = parseInt(localStorage.getItem('langIndex')) || 0;
-  let autoSwitchLang = true; // ✅ القيمة الأولية، ستُعدل بناءً على localStorage
-  let autoSwitchInterval;
-
-  // تحديث النصوص حسب اللغة
-  function updateAllTexts(index) {
-    const companyNameEl = document.getElementById("companyName");
-    const heroTitle = document.getElementById("heroTitle");
-    const ctaTextEl = document.getElementById("ctaText");
+    const langBtn = document.getElementById("langToggleBtn");
+    const companyName = document.getElementById("companyName");
     const nav = document.getElementById("mainNav");
     const navLinks = nav ? Array.from(nav.querySelectorAll("a")) : [];
-    const langBtn = document.getElementById("langToggleBtn");
 
-    if (companyNameEl) {
-      companyNameEl.textContent = texts.companyNames[index];
-      companyNameEl.setAttribute("dir", index === 0 ? "rtl" : "ltr");
-    }
+    // === بيانات اللغة ===
+    const langOptions = [
+      {
+        companyName: "شركة كروة لتوصيل الطلبات الإستهلاكية",
+        dir: "rtl",
+        buttonText: "EN",
+        links: [
+          { text: "الرئيسية", href: "index.html" },
+          { text: "خدماتنا", href: "services.html" },
+          { text: "عن الشركة", href: "about.html" },
+          { text: "اطلب خدمة", href: "contact.html" }
+        ]
+      },
+      {
+        companyName: "Karwa Delivery Services",
+        dir: "ltr",
+        buttonText: "ع",
+        links: [
+          { text: "Home", href: "index.html" },
+          { text: "Services", href: "services.html" },
+          { text: "About", href: "about.html" },
+          { text: "Request Service", href: "contact.html" }
+        ]
+      }
+    ];
 
-    if (heroTitle) {
-      heroTitle.textContent = texts.heroTitles[index];
-      heroTitle.setAttribute("dir", index === 0 ? "rtl" : "ltr");
-    }
+    let langIndex = savedLangIndex;
+    let autoSwitch = savedAutoSwitch;
 
-    if (ctaTextEl) {
-      ctaTextEl.textContent = texts.ctaTexts[index];
-    }
+    // === تحديث اللغة ===
+    function updateLanguage() {
+      const current = langOptions[langIndex];
 
-    if (nav) {
-      nav.style.direction = index === 0 ? "rtl" : "ltr";
-      nav.style.justifyContent = index === 0 ? "flex-end" : "flex-start";
-    }
+      if (companyName) {
+        companyName.textContent = current.companyName;
+        companyName.setAttribute("dir", current.dir);
+        companyName.classList.add("fade");
+        setTimeout(() => companyName.classList.remove("fade"), 500);
+      }
 
-    if (navLinks.length > 0) {
+      html.setAttribute("dir", current.dir);
+
+      if (nav) {
+        nav.style.direction = current.dir;
+        nav.style.justifyContent = current.dir === "rtl" ? "flex-end" : "flex-start";
+      }
+
       navLinks.forEach((link, i) => {
-        link.textContent = texts.navItems[index][i].text;
-        link.href = texts.navItems[index][i].href;
-        link.setAttribute("dir", index === 0 ? "rtl" : "ltr");
+        link.textContent = current.links[i].text;
+        link.href = current.links[i].href;
+        link.setAttribute("dir", current.dir);
+      });
+
+      if (langBtn) langBtn.textContent = current.buttonText;
+    }
+
+    // === تحديث الثيم ===
+    function updateTheme(theme) {
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      if (buttonTheme) {
+        buttonTheme.innerHTML = theme === 'light' ? '🌙' : '☀';
+      }
+      if (logoImg) {
+        logoImg.src = theme === 'dark'
+          ? 'CSS/Images/logo_dark2.png'
+          : 'CSS/Images/logo.png';
+      }
+    }
+
+    // === تبديل الثيم ===
+    if (buttonTheme) {
+      buttonTheme.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme') || 'light';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        updateTheme(newTheme);
       });
     }
 
+    // === تبديل اللغة بالزر ===
     if (langBtn) {
-      langBtn.textContent = texts.langBtnTexts[index];
+      langBtn.addEventListener("click", () => {
+        autoSwitch = false;
+        localStorage.setItem('autoSwitch', 'false');
+        langIndex = (langIndex + 1) % langOptions.length;
+        localStorage.setItem('langIndex', langIndex);
+        updateLanguage();
+      });
     }
-  }
 
-  // التبديل التلقائي للغة
-  function startAutoLangSwitch() {
-    autoSwitchInterval = setInterval(() => {
-      if (!autoSwitchLang) return; // ✅ لو المستخدم أوقف التبديل، نخرج فورًا
-
-      langIndex = (langIndex + 1) % texts.companyNames.length;
-      localStorage.setItem("langIndex", langIndex);
-      updateAllTexts(langIndex);
+    // === تبديل تلقائي للغة ===
+    setInterval(() => {
+      if (!autoSwitch) return;
+      langIndex = (langIndex + 1) % langOptions.length;
+      localStorage.setItem('langIndex', langIndex);
+      updateLanguage();
     }, 5000);
-  }
+
+    // === تحميل الإعدادات ===
+    updateLanguage();
+    updateTheme(savedTheme);
+  });
 </script>
+
+
 </body>
 </html>
