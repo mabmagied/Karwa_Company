@@ -229,6 +229,11 @@ margin-top: 30px;
     transform: scale(1.05);
     box-shadow: 0 10px 20px rgba(255, 102, 0, 0.45);
 }
+    .whatsapp-icon {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1); /* لجعل الأيقونة بيضاء */
+}
 
 #ctaText {
   display: inline-block;
@@ -420,7 +425,13 @@ margin-top: 30px;
       <div class="hero-text">
         <h1 id="heroTitle" class="hero-title" dir="rtl">شركة توصيل طلبات داخلية آمنة</h1>
 
-        <a id="ctaButton" href="https://wa.me/96560464711?text=السلام عليكم، أود طلب خدمة توصيل" class="btn" target="_blank">
+ <a id="ctaButton"
+   href="https://wa.me/96560464711?text=السلام عليكم، أود طلب خدمة توصيل"
+   class="btn"
+   target="_blank" rel="noopener">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg"
+       alt="WhatsApp"
+       class="whatsapp-icon">
   <span id="ctaText">اطلب الآن</span>
 </a>
 
