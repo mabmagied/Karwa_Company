@@ -590,7 +590,10 @@ margin-top: 30px;
         { text: "Request Service", href: "contact.html" }
       ]
     ],
-    langBtnTexts: ["EN", "ع"]
+        langBtnTexts: [
+  '<img src="CSS/Images/en.png" alt="AR" style="width: 20px; height: 20px;" />',
+  '<img src="CSS/Images/ar.png" alt="AR" style="width: 20px; height: 20px;" />'
+]
   };
 
   let langIndex = parseInt(localStorage.getItem('langIndex')) || 0;
@@ -634,7 +637,7 @@ margin-top: 30px;
     }
 
     if (langBtn) {
-      langBtn.textContent = texts.langBtnTexts[index];
+      langBtn.innerHTML = texts.langBtnTexts[index];
     }
   }
 
