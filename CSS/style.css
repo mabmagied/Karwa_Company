@@ -49,7 +49,7 @@ body {
     text-decoration: none;
     color: #333;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 14px;
     transition: color 0.3s ease;
     position: relative;
 }
@@ -81,7 +81,7 @@ color: rgba(245, 124, 0, 0.5);
     padding: 20px;
     background-color: #fff;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .nav-links li {
@@ -319,7 +319,7 @@ footer {
     }
 
     .logo {
-        font-size: 22px;
+        font-size: 18px;
         margin-bottom: 10px;
     }
 .slider-container {
