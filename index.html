@@ -131,6 +131,35 @@
       align-items: center;
       justify-content: center;
     }
+    /* نفس شكل زر الدارك مود */
+.floating-btn {
+  position: fixed;
+  right: 30px;
+ z-index: 10000;
+  background: var(--nav-text);
+  color: var(--bg-color);
+  border: none;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: transform .3s, box-shadow .3s;
+}
+
+.floating-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+/* يضع زر اللغة 80‑100px أعلى زر الدارك مود */
+.lang-toggle       { bottom: 100px; }   /* يمكنك ضبط المسافة حسب ذوقك */
+.theme-toggle      { bottom:  30px; }   /* ظلّت كما كانت */
 
     .theme-toggle:hover {
       transform: scale(1.1);
@@ -467,14 +496,24 @@ margin-top: 30px;
 
   </main>
 
-  <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع المظلم">🌙</button>
+ <!-- Floating dark mode toggle button -->
+    <button id="langToggleBtn"
+        class="floating-btn lang-toggle"
+        title="تبديل اللغة">EN</button>
+
+<!-- زر تبديل الوضع المظلم -->
+<button id="themeToggleBtn"
+        class="floating-btn theme-toggle"
+        onclick="toggleTheme()"
+        title="تبديل الوضع المظلم">🌙</button>
+
 
   <footer>جميع الحقوق محفوظة لشركة كروة لتوصيل الطلبات الإستهلاكية &copy; 2025</footer>
 
   <!-- JavaScript -->
   <script>
   // تبديل الوضع الليلي
-   function toggleTheme() {
+  function toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute('data-theme');
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -505,143 +544,112 @@ margin-top: 30px;
     logoImg.src = savedTheme === 'dark'
       ? 'CSS/Images/logo_dark2.png'
       : 'CSS/Images/logo.png';
+
+    // تشغيل التبديل التلقائي للنصوص عند التحميل
+    startAutoLangSwitch();
   });
 
-  // سلايدر الصور
-  const slides = document.querySelectorAll('.slider .slide');
-  const dots = document.querySelectorAll('.slider .dot');
-  const prev = document.querySelector('.slider .prev');
-  const next = document.querySelector('.slider .next');
-  let index = 0;
+  // نصوص اللغات وعناصر الصفحة المتغيرة
+  const texts = {
+    companyNames: [
+      "شركة كروة لتوصيل الطلبات الإستهلاكية",
+      "Karwa Delivery Services"
+    ],
+    heroTitles: [
+      "شركة توصيل طلبات داخلية آمنة",
+      "Secure Local Delivery Company"
+    ],
+    ctaTexts: [
+      "اطلب الآن",
+      "Order Now"
+    ],
+    navItems: [
+      [
+        { text: "الرئيسية", href: "index.html" },
+        { text: "خدماتنا", href: "services.html" },
+        { text: "عن الشركة", href: "about.html" },
+        { text: "اطلب خدمة", href: "contact.html" }
+      ],
+      [
+        { text: "Home", href: "index.html" },
+        { text: "Services", href: "services.html" },
+        { text: "About", href: "about.html" },
+        { text: "Request Service", href: "contact.html" }
+      ]
+    ],
+    langBtnTexts: [
+      "EN",
+      "ع"
+    ]
+  };
 
-  function showSlide(i) {
-    slides.forEach((slide, idx) => {
-      slide.classList.toggle('active', idx === i);
-      dots[idx].classList.toggle('active', idx === i);
-    });
-    index = i;
-  }
-
-  function nextSlide() {
-    showSlide((index + 1) % slides.length);
-  }
-
-  function prevSlide() {
-    showSlide((index - 1 + slides.length) % slides.length);
-  }
-
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => showSlide(parseInt(dot.dataset.index)));
-  });
-
-  next.addEventListener('click', nextSlide);
-  prev.addEventListener('click', prevSlide);
-  setInterval(nextSlide, 5000); // كل 5 ثواني
-
-  // تغيير اسم الشركة كل 5 ثواني
+  // عناصر الصفحة
   const companyNameEl = document.getElementById("companyName");
-  const names = [
-    { text: "شركة كروة لتوصيل الطلبات الإستهلاكية", dir: "rtl" },
-    { text: "Karwa Delivery Services", dir: "ltr" }
-  ];
-  let nameIndex = 0;
-
-  setInterval(() => {
-    companyNameEl.style.opacity = 0;
-
-    setTimeout(() => {
-      nameIndex = (nameIndex + 1) % names.length;
-      companyNameEl.textContent = names[nameIndex].text;
-      companyNameEl.setAttribute("dir", names[nameIndex].dir);
-      companyNameEl.classList.add("fade");
-      companyNameEl.style.opacity = 1;
-      setTimeout(() => companyNameEl.classList.remove("fade"), 500);
-    }, 500);
-  }, 5000);
-
-  // تغيير عنوان الصفحة الرئيسية كل 5 ثواني
   const heroTitle = document.getElementById("heroTitle");
-  const heroTexts = [
-    { text: "شركة توصيل طلبات داخلية آمنة", dir: "rtl" },
-    { text: "Secure Local Delivery Company", dir: "ltr" }
-  ];
-  let heroIndex = 0;
+  const ctaTextEl = document.getElementById("ctaText");
+  const nav = document.getElementById("mainNav");
+  const navLinks = Array.from(nav.querySelectorAll("a"));
+  const langBtn = document.getElementById("langToggleBtn");
 
-  setInterval(() => {
-    heroTitle.style.opacity = 0;
+  let langIndex = 0;
+  let autoSwitchLang = true;
+  let autoSwitchInterval;
 
-    setTimeout(() => {
-      heroIndex = (heroIndex + 1) % heroTexts.length;
-      heroTitle.textContent = heroTexts[heroIndex].text;
-      heroTitle.setAttribute("dir", heroTexts[heroIndex].dir);
+  // دالة لتحديث جميع النصوص بناء على اللغة المختارة
+  function updateAllTexts(index) {
+    // تحديث اسم الشركة
+    companyNameEl.textContent = texts.companyNames[index];
+    companyNameEl.setAttribute("dir", index === 0 ? "rtl" : "ltr");
+    companyNameEl.classList.add("fade");
+    setTimeout(() => companyNameEl.classList.remove("fade"), 500);
+
+    // تحديث العنوان الرئيسي
+    if (heroTitle) {
+      heroTitle.textContent = texts.heroTitles[index];
+      heroTitle.setAttribute("dir", index === 0 ? "rtl" : "ltr");
       heroTitle.classList.add("fade");
-      heroTitle.style.opacity = 1;
       setTimeout(() => heroTitle.classList.remove("fade"), 500);
-    }, 500);
-  }, 5000);
+    }
 
-  const ctaTexts = ["اطلب الآن", "Order Now"];
-  let ctaIndex = 0;
+    // تحديث زر "اطلب الآن"
+    if (ctaTextEl) {
+      ctaTextEl.textContent = texts.ctaTexts[index];
+    }
 
-  setInterval(() => {
-    const textElement = document.getElementById("ctaText");
-    textElement.style.opacity = 0;
-
-    setTimeout(() => {
-      ctaIndex = (ctaIndex + 1) % ctaTexts.length;
-      textElement.textContent = ctaTexts[ctaIndex];
-      textElement.style.opacity = 1;
-    }, 300);
-  }, 5000);
-// تغيير عناصر التنقل في الهيدر كل 5 ثواني مع تبديل الاتجاه والترتيب
-const nav = document.getElementById("mainNav");
-const navLinks = Array.from(nav.querySelectorAll("a"));
-const navItems = [
-  [
-    { text: "الرئيسية", href: "index.html" },
-    { text: "خدماتنا", href: "services.html" },
-    { text: "عن الشركة", href: "about.html" },
-    { text: "اطلب خدمة", href: "contact.html" }
-  ],
-  [
-    { text: "Home", href: "index.html" },
-    { text: "Services", href: "services.html" },
-    { text: "About", href: "about.html" },
-    { text: "Request Service", href: "contact.html" }
-  ]
-];
-let navLangIndex = 0;
-
-setInterval(() => {
-  navLangIndex = (navLangIndex + 1) % navItems.length;
-
-  // غيّر اتجاه القائمة
-  nav.style.direction = navLangIndex === 0 ? "rtl" : "ltr";
-  nav.style.justifyContent = navLangIndex === 0 ? "flex-end" : "flex-start";
-
-  const itemsToApply = navItems[navLangIndex];
-
-  navLinks.forEach((link, i) => {
-    // إزالة النص مؤقتًا
-    link.style.opacity = 0;
-
-    setTimeout(() => {
-      link.textContent = itemsToApply[i].text;
-      link.href = itemsToApply[i].href;
-      link.setAttribute("dir", navLangIndex === 0 ? "rtl" : "ltr");
-
-      // إعادة الأنيميشن
+    // تحديث قائمة التنقل
+    nav.style.direction = index === 0 ? "rtl" : "ltr";
+    nav.style.justifyContent = index === 0 ? "flex-end" : "flex-start";
+    navLinks.forEach((link, i) => {
+      link.textContent = texts.navItems[index][i].text;
+      link.href = texts.navItems[index][i].href;
+      link.setAttribute("dir", index === 0 ? "rtl" : "ltr");
       link.classList.add("fade");
-      link.style.opacity = 1;
-
-      // إزالة الكلاس بعد انتهاء الأنيميشن
       setTimeout(() => link.classList.remove("fade"), 500);
-    }, 500);
-  });
-}, 5000);
+    });
 
+    // تحديث نص زر تبديل اللغة
+    if(langBtn) {
+      langBtn.textContent = texts.langBtnTexts[index];
+    }
+  }
 
+  // دالة بدء التبديل التلقائي للنصوص
+  function startAutoLangSwitch() {
+    autoSwitchInterval = setInterval(() => {
+      if (!autoSwitchLang) return;
+      langIndex = (langIndex + 1) % texts.companyNames.length;
+      updateAllTexts(langIndex);
+    }, 5000);
+  }
 
+  // حدث الضغط على زر تبديل اللغة
+  if(langBtn) {
+    langBtn.addEventListener("click", () => {
+      autoSwitchLang = false; // إيقاف التبديل التلقائي عند الضغط
+      langIndex = (langIndex + 1) % texts.companyNames.length;
+      updateAllTexts(langIndex);
+    });
+  }
 
   </script>
 </body>
