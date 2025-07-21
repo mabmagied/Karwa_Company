@@ -130,6 +130,35 @@
       align-items: center;
       justify-content: center;
     }
+    /* نفس شكل زر الدارك مود */
+.floating-btn {
+  position: fixed;
+  right: 30px;
+  background: var(--nav-text);
+  color: var(--bg-color);
+  border: none;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: transform .3s, box-shadow .3s;
+}
+
+.floating-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+/* يضع زر اللغة 80‑100px أعلى زر الدارك مود */
+.lang-toggle       { bottom: 100px; }   /* يمكنك ضبط المسافة حسب ذوقك */
+.theme-toggle      { bottom:  30px; }   /* ظلّت كما كانت */
+
 
     .theme-toggle:hover {
       transform: scale(1.1);
@@ -267,13 +296,23 @@
 </section>
   </main>
 
-  <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع المظلم">🌙</button>
+     <!-- Floating dark mode toggle button -->
+    <button id="langToggleBtn"
+        class="floating-btn lang-toggle"
+        title="تبديل اللغة">EN</button>
+
+<!-- زر تبديل الوضع المظلم -->
+<button id="themeToggleBtn"
+        class="floating-btn theme-toggle"
+        onclick="toggleTheme()"
+        title="تبديل الوضع المظلم">🌙</button>
 
   <footer>
     جميع الحقوق محفوظة لشركة كروة لتوصيل الطلبات الإستهلاكية &copy; 2025
   </footer>
 
-  <script>
+ 
+<script>
    function toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute('data-theme');
@@ -308,70 +347,74 @@
   });
 
   // تغيير اسم الشركة كل 5 ثواني
-  const companyNameEl = document.getElementById("companyName");
-  const names = [
-    { text: "شركة كروة لتوصيل الطلبات الإستهلاكية", dir: "rtl" },
-    { text: "Karwa Delivery Services", dir: "ltr" }
+   const nav = document.getElementById("mainNav");
+  const navLinks = Array.from(nav.querySelectorAll("a"));
+  const langBtn = document.getElementById("langToggleBtn");
+  const companyName = document.getElementById("companyName");
+
+  const langOptions = [
+    {
+      companyName: "شركة كروة لتوصيل الطلبات الإستهلاكية",
+      dir: "rtl",
+      buttonText: "EN",
+      links: [
+        { text: "الرئيسية", href: "index.html" },
+        { text: "خدماتنا", href: "services.html" },
+        { text: "عن الشركة", href: "about.html" },
+        { text: "اطلب خدمة", href: "contact.html" }
+      ]
+    },
+    {
+      companyName: "Karwa Delivery Services",
+      dir: "ltr",
+      buttonText: "ع",
+      links: [
+        { text: "Home", href: "index.html" },
+        { text: "Services", href: "services.html" },
+        { text: "About", href: "about.html" },
+        { text: "Request Service", href: "contact.html" }
+      ]
+    }
   ];
-  let nameIndex = 0;
 
-  setInterval(() => {
-    companyNameEl.style.opacity = 0;
-    setTimeout(() => {
-      nameIndex = (nameIndex + 1) % names.length;
-      companyNameEl.textContent = names[nameIndex].text;
-      companyNameEl.setAttribute("dir", names[nameIndex].dir);
-      companyNameEl.classList.add("fade");
-      companyNameEl.style.opacity = 1;
-      setTimeout(() => companyNameEl.classList.remove("fade"), 500);
-    }, 500);
+  let langIndex = 0;
+  let autoSwitch = true;
+
+  function updateLanguage() {
+    const current = langOptions[langIndex];
+    companyName.textContent = current.companyName;
+    companyName.setAttribute("dir", current.dir);
+    companyName.classList.add("fade");
+
+    nav.style.direction = current.dir;
+    nav.style.justifyContent = current.dir === "rtl" ? "flex-end" : "flex-start";
+    navLinks.forEach((link, i) => {
+      link.textContent = current.links[i].text;
+      link.href = current.links[i].href;
+      link.setAttribute("dir", current.dir);
+    });
+
+    langBtn.textContent = current.buttonText;
+
+    setTimeout(() => companyName.classList.remove("fade"), 500);
+  }
+
+  // التبديل التلقائي
+  const interval = setInterval(() => {
+    if (!autoSwitch) return;
+    langIndex = (langIndex + 1) % langOptions.length;
+    updateLanguage();
   }, 5000);
-// تغيير عناصر التنقل في الهيدر كل 5 ثواني مع تبديل الاتجاه والترتيب
-const nav = document.getElementById("mainNav");
-const navLinks = Array.from(nav.querySelectorAll("a"));
-const navItems = [
-  [
-    { text: "الرئيسية", href: "index.html" },
-    { text: "خدماتنا", href: "services.html" },
-    { text: "عن الشركة", href: "about.html" },
-    { text: "اطلب خدمة", href: "contact.html" }
-  ],
-  [
-    { text: "Home", href: "index.html" },
-    { text: "Services", href: "services.html" },
-    { text: "About", href: "about.html" },
-    { text: "Request Service", href: "contact.html" }
-  ]
-];
-let navLangIndex = 0;
 
-setInterval(() => {
-  navLangIndex = (navLangIndex + 1) % navItems.length;
-
-  // غيّر اتجاه القائمة
-  nav.style.direction = navLangIndex === 0 ? "rtl" : "ltr";
-  nav.style.justifyContent = navLangIndex === 0 ? "flex-end" : "flex-start";
-
-  const itemsToApply = navItems[navLangIndex];
-
-  navLinks.forEach((link, i) => {
-    // إزالة النص مؤقتًا
-    link.style.opacity = 0;
-
-    setTimeout(() => {
-      link.textContent = itemsToApply[i].text;
-      link.href = itemsToApply[i].href;
-      link.setAttribute("dir", navLangIndex === 0 ? "rtl" : "ltr");
-
-      // إعادة الأنيميشن
-      link.classList.add("fade");
-      link.style.opacity = 1;
-
-      // إزالة الكلاس بعد انتهاء الأنيميشن
-      setTimeout(() => link.classList.remove("fade"), 500);
-    }, 500);
+  // عند الضغط على الزر – يوقف التبديل ويبدل اللغة مرة واحدة
+  langBtn.addEventListener("click", () => {
+    autoSwitch = false;
+    langIndex = (langIndex + 1) % langOptions.length;
+    updateLanguage();
   });
-}, 5000);
+
+  updateLanguage();
+
   </script>
 </body>
 </html>
